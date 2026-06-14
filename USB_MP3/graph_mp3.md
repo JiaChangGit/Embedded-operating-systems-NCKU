@@ -504,23 +504,26 @@ flowchart TD
 sequenceDiagram
     participant Wave as waveplayer.c
     participant Audio as AUDIO.c
-    participant Link as AUDIO_LINK.c
+    participant AudioLink as AUDIO_LINK.c
     participant Codec as cs43l22.c
     participant I2C as I2C1 HAL
-    participant CS as CS43L22
+    participant CS43 as CS43L22
 
     Wave->>Audio: PlayerInit(WaveFormat.SampleRate)
     Audio->>Audio: AUDIO_OUT_ClockConfig()
     Audio->>Audio: I2S3_Init(AudioFreq)
+
     Audio->>Codec: cs43l22_drv.ReadID(AUDIO_I2C_ADDRESS)
-    Codec->>Link: AUDIO_IO_Init()
-    Link->>I2C: I2Cx_Init()
-    Link->>CS: reset pin OFF then ON
-    Codec->>Link: AUDIO_IO_Read(CHIPID)
-    Link->>I2C: HAL_I2C_Mem_Read()
+    Codec->>AudioLink: AUDIO_IO_Init()
+    AudioLink->>I2C: I2Cx_Init()
+    AudioLink->>CS43: Reset pin OFF then ON
+
+    Codec->>AudioLink: AUDIO_IO_Read(CHIPID)
+    AudioLink->>I2C: HAL_I2C_Mem_Read()
+
     Audio->>Codec: Init(address, BOTH, volume, freq)
-    Codec->>Link: 多次 AUDIO_IO_Write(reg, value)
-    Link->>I2C: HAL_I2C_Mem_Write()
+    Codec->>AudioLink: AUDIO_IO_Write(reg, value)
+    AudioLink->>I2C: HAL_I2C_Mem_Write()
 ```
 
 ## 27. `AUDIO_DrvTypeDef` 函式指標

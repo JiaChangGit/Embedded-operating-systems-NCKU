@@ -23,6 +23,8 @@
 #include "usbh_platform.h"
 
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
+#include "task.h"
 
 /* USER CODE END Includes */
 
@@ -39,6 +41,17 @@ HCD_HandleTypeDef hhcd_USB_OTG_FS;
 void Error_Handler(void);
 
 /* USER CODE BEGIN 0 */
+static void usbh_delay_ms(uint32_t delay_ms)
+{
+  if (delay_ms == 0U) {
+    return;
+  }
+  if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+    vTaskDelay(pdMS_TO_TICKS(delay_ms));
+  } else {
+    HAL_Delay(delay_ms);
+  }
+}
 
 /* USER CODE END 0 */
 
@@ -90,7 +103,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
     __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
 
     /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(OTG_FS_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(OTG_FS_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
   /* USER CODE BEGIN USB_OTG_FS_MspInit 1 */
 
@@ -453,7 +466,7 @@ USBH_StatusTypeDef USBH_LL_DriverVBUS(USBH_HandleTypeDef *phost, uint8_t state)
 
   /* USER CODE END 0*/
 
-  HAL_Delay(200);
+  usbh_delay_ms(200U);
   return USBH_OK;
 }
 
@@ -511,7 +524,7 @@ uint8_t USBH_LL_GetToggle(USBH_HandleTypeDef *phost, uint8_t pipe)
   */
 void USBH_Delay(uint32_t Delay)
 {
-  HAL_Delay(Delay);
+  usbh_delay_ms(Delay);
 }
 
 /**
@@ -543,4 +556,3 @@ USBH_StatusTypeDef USBH_Get_USB_Status(HAL_StatusTypeDef hal_status)
   }
   return usb_status;
 }
-

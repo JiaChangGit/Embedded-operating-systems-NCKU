@@ -86,8 +86,7 @@ extern "C" {
 #define AUDIO_I2Cx_ER_IRQn I2C1_ER_IRQn
 
 /* I2C speed and timeout max */
-#define I2Cx_TIMEOUT_MAX \
-  0xA000 /*<! The value of the maximal timeout for I2C waiting loops */
+#define I2Cx_TIMEOUT_MAX 100U
 #define I2Cx_MAX_COMMUNICATION_FREQ ((uint32_t)100000)
 
 /*################################### AUDIO ##################################*/

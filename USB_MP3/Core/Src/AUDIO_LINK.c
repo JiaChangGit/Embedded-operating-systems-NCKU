@@ -60,15 +60,26 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "AUDIO_LINK.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 uint32_t I2cxTimeout =
     I2Cx_TIMEOUT_MAX; /*<! Value of Timeout when I2C communication fails */
 
 static I2C_HandleTypeDef I2cHandle;
 
+static void audio_link_delay_ms(uint32_t delay_ms) {
+  if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+    vTaskDelay(pdMS_TO_TICKS(delay_ms));
+  } else {
+    HAL_Delay(delay_ms);
+  }
+}
+
 /* I2Cx bus function */
 static void I2Cx_Init(void);
-static void I2Cx_WriteData(uint16_t Addr, uint8_t Reg, uint8_t Value);
+static HAL_StatusTypeDef I2Cx_WriteData(uint16_t Addr, uint8_t Reg,
+                                       uint8_t Value);
 static uint8_t I2Cx_ReadData(uint16_t Addr, uint8_t Reg);
 static void I2Cx_Error(void);
 static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c);
@@ -76,8 +87,8 @@ static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c);
 /* Link functions for AUDIO */
 void AUDIO_IO_Init(void);
 void AUDIO_IO_DeInit(void);
-void AUDIO_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value);
-uint8_t AUDIO_IO_Read(uint8_t Addr, uint8_t Reg);
+uint8_t AUDIO_IO_Write(uint16_t Addr, uint8_t Reg, uint8_t Value);
+uint8_t AUDIO_IO_Read(uint16_t Addr, uint8_t Reg);
 
 /*******************************************************************************
                             BUS OPERATIONS
@@ -112,17 +123,20 @@ static void I2Cx_Init(void) {
  * @param  Reg: The target register address to write
  * @param  Value: The target register value to be written
  */
-static void I2Cx_WriteData(uint16_t Addr, uint8_t Reg, uint8_t Value) {
+static HAL_StatusTypeDef I2Cx_WriteData(uint16_t Addr, uint8_t Reg,
+                                       uint8_t Value) {
   HAL_StatusTypeDef status = HAL_OK;
 
   status = HAL_I2C_Mem_Write(&I2cHandle, Addr, (uint16_t)Reg,
                              I2C_MEMADD_SIZE_8BIT, &Value, 1, I2cxTimeout);
 
-  /* Check the communication status */
+  /* 匯流排錯誤時重設 I2C 後只重試一次，避免 task 長時間卡住。 */
   if (status != HAL_OK) {
-    /* Execute user timeout callback */
     I2Cx_Error();
+    status = HAL_I2C_Mem_Write(&I2cHandle, Addr, (uint16_t)Reg,
+                               I2C_MEMADD_SIZE_8BIT, &Value, 1, I2cxTimeout);
   }
+  return status;
 }
 
 /**
@@ -140,8 +154,12 @@ static uint8_t I2Cx_ReadData(uint16_t Addr, uint8_t Reg) {
 
   /* Check the communication status */
   if (status != HAL_OK) {
-    /* Execute user timeout callback */
     I2Cx_Error();
+    status = HAL_I2C_Mem_Read(&I2cHandle, Addr, Reg, I2C_MEMADD_SIZE_8BIT,
+                              &value, 1, I2cxTimeout);
+    if (status != HAL_OK) {
+      value = 0U;
+    }
   }
   return value;
 }
@@ -163,6 +181,7 @@ static void I2Cx_Error(void) {
  */
 static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c) {
   GPIO_InitTypeDef GPIO_InitStructure;
+  (void)hi2c;
 
   /* Enable the I2C peripheral */
   AUDIO_I2Cx_CLOCK_ENABLE();
@@ -185,13 +204,12 @@ static void I2Cx_MspInit(I2C_HandleTypeDef *hi2c) {
   /* Release the I2C peripheral clock reset */
   AUDIO_I2Cx_RELEASE_RESET();
 
-  /* Enable and set I2Cx Interrupt to the lowest priority */
-  HAL_NVIC_SetPriority(AUDIO_I2Cx_EV_IRQn, 0x0F, 0);
-  HAL_NVIC_EnableIRQ(AUDIO_I2Cx_EV_IRQn);
-
-  /* Enable and set I2Cx Interrupt to the lowest priority */
-  HAL_NVIC_SetPriority(AUDIO_I2Cx_ER_IRQn, 0x0F, 0);
-  HAL_NVIC_EnableIRQ(AUDIO_I2Cx_ER_IRQn);
+  /*
+   * Codec control 使用 blocking HAL_I2C_Mem_Read/Write，不啟用 I2C1 IRQ。
+   * 專案沒有 I2C1_EV/ER handler，若開啟 NVIC 可能落入 Default_Handler。
+   */
+  HAL_NVIC_DisableIRQ(AUDIO_I2Cx_EV_IRQn);
+  HAL_NVIC_DisableIRQ(AUDIO_I2Cx_ER_IRQn);
 }
 
 /*******************************************************************************
@@ -222,13 +240,13 @@ void AUDIO_IO_Init(void) {
   CODEC_AUDIO_POWER_OFF();
 
   /* Wait for a delay to insure registers erasing */
-  HAL_Delay(5);
+  audio_link_delay_ms(5U);
 
   /* Power on the codec */
   CODEC_AUDIO_POWER_ON();
 
   /* Wait for a delay to insure registers erasing */
-  HAL_Delay(5);
+  audio_link_delay_ms(5U);
 }
 
 /**
@@ -242,8 +260,8 @@ void AUDIO_IO_DeInit(void) {}
  * @param  Reg: Reg address
  * @param  Value: Data to be written
  */
-void AUDIO_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value) {
-  I2Cx_WriteData(Addr, Reg, Value);
+uint8_t AUDIO_IO_Write(uint16_t Addr, uint8_t Reg, uint8_t Value) {
+  return (uint8_t)((I2Cx_WriteData(Addr, Reg, Value) == HAL_OK) ? 0U : 1U);
 }
 
 /**
@@ -252,7 +270,7 @@ void AUDIO_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value) {
  * @param  Reg: Reg address
  * @retval Data to be read
  */
-uint8_t AUDIO_IO_Read(uint8_t Addr, uint8_t Reg) {
+uint8_t AUDIO_IO_Read(uint16_t Addr, uint8_t Reg) {
   return I2Cx_ReadData(Addr, Reg);
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

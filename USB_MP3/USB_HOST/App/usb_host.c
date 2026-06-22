@@ -40,7 +40,7 @@
 
 /* USB Host core handle declaration */
 USBH_HandleTypeDef hUsbHostFS;
-ApplicationTypeDef Appli_state = APPLICATION_IDLE;
+volatile ApplicationTypeDef Appli_state = APPLICATION_IDLE;
 
 /*
  * -- Insert your variables declaration here --
@@ -133,4 +133,3 @@ static void USBH_UserProcess  (USBH_HandleTypeDef *phost, uint8_t id)
 /**
   * @}
   */
-

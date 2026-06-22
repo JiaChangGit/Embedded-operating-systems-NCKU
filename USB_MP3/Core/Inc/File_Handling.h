@@ -23,11 +23,12 @@
 #define FILE_HANDLING_H_
 
 #include "fatfs.h"
+#include "stdbool.h"
 #include "stdio.h"
 #include "string.h"
 
 #define FILEMGR_LIST_DEPDTH 24
-#define FILEMGR_FILE_NAME_SIZE 40
+#define FILEMGR_FILE_NAME_SIZE 64
 #define FILEMGR_FULL_PATH_SIZE 256
 #define FILEMGR_MAX_LEVEL 4
 #define FILETYPE_DIR 0
@@ -43,12 +44,14 @@ typedef struct _FILELIST_FileTypeDef {
   uint16_t ptr;
 } FILELIST_FileTypeDef;
 
-/* mounts the USB*/
-void Mount_USB(void);
+/* Mount/unmount 只允許由 FileTask 呼叫，避免 FatFs re-entrancy 問題。 */
+FRESULT Mount_USB(void);
 
-/* unmounts the USB*/
-void Unmount_USB(void);
+FRESULT Unmount_USB(void);
 
+FRESULT AUDIO_StorageParse(void);
 uint16_t AUDIO_GetWavObjectNumber(void);
+const char *AUDIO_GetWavName(uint16_t index);
+void AUDIO_ClearFileList(void);
 
 #endif /* FILE_HANDLING_H_ */

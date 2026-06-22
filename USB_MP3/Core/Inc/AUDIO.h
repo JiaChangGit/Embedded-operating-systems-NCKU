@@ -110,19 +110,19 @@ typedef struct {
 /* I2S DMA Stream definitions */
 #define I2S3_DMAx_CLK_ENABLE() __HAL_RCC_DMA1_CLK_ENABLE()
 #define I2S3_DMAx_CLK_DISABLE() __HAL_RCC_DMA1_CLK_DISABLE()
-#define I2S3_DMAx_STREAM DMA1_Stream7
+#define I2S3_DMAx_STREAM DMA1_Stream5
 #define I2S3_DMAx_CHANNEL DMA_CHANNEL_0
-#define I2S3_DMAx_IRQ DMA1_Stream7_IRQn
+#define I2S3_DMAx_IRQ DMA1_Stream5_IRQn
 #define I2S3_DMAx_PERIPH_DATA_SIZE DMA_PDATAALIGN_HALFWORD
 #define I2S3_DMAx_MEM_DATA_SIZE DMA_MDATAALIGN_HALFWORD
 #define DMA_MAX_SZE 0xFFFF
 
-#define I2S3_IRQHandler DMA1_Stream7_IRQHandler
+#define I2S3_IRQHandler DMA1_Stream5_IRQHandler
 
 /* Select the interrupt preemption priority and subpriority for the DMA
  * interrupt */
 #define AUDIO_OUT_IRQ_PREPRIO \
-  0x0E /* Select the preemption priority level(0 is the highest) */
+  6U /* FreeRTOS FromISR API 可用，且高於 UART/EXTI。 */
 
 /*------------------------------------------------------------------------------
              CONFIGURATION: Audio Driver Configuration parameters

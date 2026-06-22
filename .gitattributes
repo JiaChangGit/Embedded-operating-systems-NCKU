@@ -1,0 +1,489 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Global defaults
+# - Auto-detect text/binary
+# - Normalize all committed text files to LF in repository
+# ──────────────────────────────────────────────────────────────────────────────
+* text=auto
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Documentation / Plain Text
+# ──────────────────────────────────────────────────────────────────────────────
+*.markdown  text eol=lf
+*.md        text eol=lf
+*.mdwn      text eol=lf
+*.mdown     text eol=lf
+*.mkd       text eol=lf
+*.mkdn      text eol=lf
+*.mdtxt     text eol=lf
+*.mdtext    text eol=lf
+*.txt       text eol=lf
+
+AUTHORS        text eol=lf
+CHANGELOG      text eol=lf
+CHANGES        text eol=lf
+CONTRIBUTING   text eol=lf
+COPYING        text eol=lf
+copyright      text eol=lf
+*COPYRIGHT*    text eol=lf
+INSTALL        text eol=lf
+license        text eol=lf
+LICENSE        text eol=lf
+NEWS           text eol=lf
+readme         text eol=lf
+*README*       text eol=lf
+TODO           text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Template Engines
+# ──────────────────────────────────────────────────────────────────────────────
+*.ejs         text eol=lf
+*.haml        text eol=lf
+*.handlebars  text eol=lf
+*.hbs         text eol=lf
+*.hbt         text eol=lf
+*.jade        text eol=lf
+*.latte       text eol=lf
+*.mustache    text eol=lf
+*.njk         text eol=lf
+*.phtml       text eol=lf
+*.tmpl        text eol=lf
+*.tpl         text eol=lf
+*.twig        text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Microsoft Office
+# ──────────────────────────────────────────────────────────────────────────────
+*.doc   diff=astextplain
+*.DOC   diff=astextplain
+*.docx  diff=astextplain
+*.DOCX  diff=astextplain
+*.dot   diff=astextplain
+*.DOT   diff=astextplain
+*.rtf   diff=astextplain
+*.RTF   diff=astextplain
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Web / CSS
+# ──────────────────────────────────────────────────────────────────────────────
+*.css    text eol=lf diff=css
+*.scss   text eol=lf diff=css
+*.sass   text eol=lf
+*.less   text eol=lf
+*.styl   text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# HTML / Templates
+# ──────────────────────────────────────────────────────────────────────────────
+*.htm      text eol=lf diff=html
+*.html     text eol=lf diff=html
+*.xhtml    text eol=lf diff=html
+*.cshtml   text eol=lf diff=html
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# JavaScript / TypeScript
+# ──────────────────────────────────────────────────────────────────────────────
+*.js      text eol=lf
+*.mjs     text eol=lf
+*.cjs     text eol=lf
+*.jsx     text eol=lf
+*.ts      text eol=lf
+*.tsx     text eol=lf
+*.coffee  text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PHP
+# ──────────────────────────────────────────────────────────────────────────────
+*.php   text eol=lf
+*.inc   text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Python
+# ──────────────────────────────────────────────────────────────────────────────
+*.py    text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Ruby
+# ──────────────────────────────────────────────────────────────────────────────
+*.rb    text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Shell
+# ──────────────────────────────────────────────────────────────────────────────
+*.sh      text eol=lf
+*.bash    text eol=lf
+*.zsh     text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Perl
+# ──────────────────────────────────────────────────────────────────────────────
+*.pl    text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PowerShell
+# Windows native tooling expects CRLF
+# ──────────────────────────────────────────────────────────────────────────────
+*.ps1   text eol=crlf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Windows Batch
+# ──────────────────────────────────────────────────────────────────────────────
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Go
+# ──────────────────────────────────────────────────────────────────────────────
+*.go    text eol=lf diff=golang
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Rust
+# ──────────────────────────────────────────────────────────────────────────────
+*.rs    text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# C / C++
+# ──────────────────────────────────────────────────────────────────────────────
+*.c      text eol=lf diff=cpp
+*.cc     text eol=lf diff=cpp
+*.cxx    text eol=lf diff=cpp
+*.cpp    text eol=lf diff=cpp
+*.cpi    text eol=lf diff=cpp
+*.c++    text eol=lf diff=cpp
+
+*.h      text eol=lf diff=cpp
+*.hh     text eol=lf diff=cpp
+*.hpp    text eol=lf diff=cpp
+*.hxx    text eol=lf diff=cpp
+*.h++    text eol=lf diff=cpp
+
+*.inl    text eol=lf diff=cpp
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# C#
+# ──────────────────────────────────────────────────────────────────────────────
+*.cs      text eol=crlf diff=csharp
+*.csx     text eol=crlf diff=csharp
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Java / JVM
+# ──────────────────────────────────────────────────────────────────────────────
+*.java         text eol=lf diff=java
+*.kt           text eol=lf diff=kotlin
+*.kts          text eol=lf diff=kotlin
+*.groovy       text eol=lf diff=java
+*.scala        text eol=lf diff=java
+
+*.gradle       text eol=lf diff=java
+*.gradle.kts   text eol=lf diff=kotlin
+
+*.jsp          text eol=lf
+*.jspf         text eol=lf
+*.jspx         text eol=lf
+*.tld          text eol=lf
+*.tag          text eol=lf
+*.tagx         text eol=lf
+
+*.properties   text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SQL
+# ──────────────────────────────────────────────────────────────────────────────
+*.sql   text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# XML
+# ──────────────────────────────────────────────────────────────────────────────
+*.xml   text eol=lf
+*.xsl   text eol=lf
+*.xsd   text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# JSON / YAML / TOML
+# ──────────────────────────────────────────────────────────────────────────────
+*.json   text eol=lf
+*.yaml   text eol=lf
+*.yml    text eol=lf
+*.toml   text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Lock Files
+# Disable diff noise
+# ──────────────────────────────────────────────────────────────────────────────
+package-lock.json  text eol=lf -diff
+yarn.lock          text eol=lf -diff
+pnpm-lock.yaml     text eol=lf -diff
+Gemfile.lock       text eol=lf -diff
+Cargo.lock         text eol=lf -diff
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Environment Files
+# ──────────────────────────────────────────────────────────────────────────────
+*.env   text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# GraphQL
+# ──────────────────────────────────────────────────────────────────────────────
+*.graphql   text eol=lf
+*.gql       text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Prisma
+# ──────────────────────────────────────────────────────────────────────────────
+*.prisma    text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Config / Tooling
+# ──────────────────────────────────────────────────────────────────────────────
+.browserslistrc   text eol=lf
+.bowerrc          text eol=lf
+.editorconfig     text eol=lf
+.eslintrc         text eol=lf
+.csslintrc        text eol=lf
+.jscsrc           text eol=lf
+.jshintrc         text eol=lf
+.jshintignore     text eol=lf
+.stylelintrc      text eol=lf
+.stylecop         text eol=lf
+.gitattributes    text eol=lf
+.gitconfig        text eol=lf
+.gitignore        text eol=lf
+.htaccess         text eol=lf
+
+*.bowerrc         text eol=lf
+*.cnf             text eol=lf
+*.conf            text eol=lf
+*.config          text eol=lf
+*.dockerignore    text eol=lf
+*.npmignore       text eol=lf
+*.ini             text eol=lf
+*.od              text eol=lf
+*.onlydata        text eol=lf
+*.scm             text eol=lf
+
+browserslist      text eol=lf
+Dockerfile        text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Makefiles
+# ──────────────────────────────────────────────────────────────────────────────
+Makefile   text eol=lf
+makefile   text eol=lf
+GNUmakefile text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# CMake
+# ──────────────────────────────────────────────────────────────────────────────
+CMakeLists.txt   text eol=lf
+*.cmake          text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Vim
+# ──────────────────────────────────────────────────────────────────────────────
+*.vim    text eol=lf
+.vimrc   text eol=lf
+.gvimrc  text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Visual Studio / .NET
+# ──────────────────────────────────────────────────────────────────────────────
+*.sln         text eol=crlf
+*.csproj      text eol=crlf
+*.vbproj      text eol=crlf
+*.vcxproj     text eol=crlf
+*.vcproj      text eol=crlf
+*.dbproj      text eol=crlf
+*.fsproj      text eol=crlf
+*.lsproj      text eol=crlf
+*.wixproj     text eol=crlf
+*.modelproj   text eol=crlf
+*.sqlproj     text eol=crlf
+*.wmaproj     text eol=crlf
+*.xproj       text eol=crlf
+*.props       text eol=crlf
+*.filters     text eol=crlf
+*.vcxitems    text eol=crlf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Build Tool Wrappers
+# ──────────────────────────────────────────────────────────────────────────────
+mvnw      text eol=lf
+gradlew   text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Images
+# ──────────────────────────────────────────────────────────────────────────────
+*.ai      binary
+*.bmp     binary
+*.eps     binary
+*.gif     binary
+*.ico     binary
+*.jng     binary
+*.jp2     binary
+*.jpg     binary
+*.jpeg    binary
+*.jpx     binary
+*.jxr     binary
+*.png     binary
+*.psb     binary
+*.psd     binary
+*.svg     binary
+*.svgz    binary
+*.tif     binary
+*.tiff    binary
+*.wbmp    binary
+*.webp    binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PDF
+# ──────────────────────────────────────────────────────────────────────────────
+*.pdf   binary
+*.PDF   binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Audio
+# ──────────────────────────────────────────────────────────────────────────────
+*.kar    binary
+*.m4a    binary
+*.mid    binary
+*.midi   binary
+*.mp3    binary
+*.ogg    binary
+*.ra     binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Video
+# ──────────────────────────────────────────────────────────────────────────────
+*.3gp    binary
+*.3gpp   binary
+*.asf    binary
+*.asx    binary
+*.fla    binary
+*.flv    binary
+*.m4v    binary
+*.mng    binary
+*.mov    binary
+*.mp4    binary
+*.mpeg   binary
+*.mpg    binary
+*.swc    binary
+*.swf    binary
+*.webm   binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Archives
+# ──────────────────────────────────────────────────────────────────────────────
+*.7z    binary
+*.gz    binary
+*.rar   binary
+*.tar   binary
+*.zip   binary
+*.xz    binary
+*.bz2   binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Fonts
+# ──────────────────────────────────────────────────────────────────────────────
+*.ttf     binary
+*.eot     binary
+*.otf     binary
+*.woff    binary
+*.woff2   binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Compiled Objects / Libraries / Executables
+# ──────────────────────────────────────────────────────────────────────────────
+*.slo      binary
+*.lo       binary
+*.o        binary
+*.obj      binary
+*.gch      binary
+*.pch      binary
+
+*.so       binary
+*.dylib    binary
+*.dll      binary
+
+*.lai      binary
+*.la       binary
+*.a        binary
+*.lib      binary
+
+*.exe      binary
+*.out      binary
+*.app      binary
+
+*.class    binary
+*.ear      binary
+*.jar      binary
+*.war      binary
+*.jks      binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# LLVM / Embedded / Firmware
+# ──────────────────────────────────────────────────────────────────────────────
+*.elf    binary
+*.bin    binary
+*.hex    binary
+*.map    text eol=lf
+*.lst    text eol=lf
+*.dmp    binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Database
+# ──────────────────────────────────────────────────────────────────────────────
+*.db      binary
+*.sqlite  binary
+*.sqlite3 binary
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Logs
+# ──────────────────────────────────────────────────────────────────────────────
+*.log    text eol=lf
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Patch Files
+# ──────────────────────────────────────────────────────────────────────────────
+*.patch  text eol=lf
+*.diff   text eol=lf

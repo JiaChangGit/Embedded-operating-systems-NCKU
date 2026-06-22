@@ -107,7 +107,7 @@ volatile uint8_t OutputDev = 0;
 /** @defgroup CS43L22_Function_Prototypes
  * @{
  */
-static uint8_t CODEC_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value);
+static uint8_t CODEC_IO_Write(uint16_t Addr, uint8_t Reg, uint8_t Value);
 /**
  * @}
  */
@@ -127,6 +127,7 @@ static uint8_t CODEC_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value);
 uint32_t cs43l22_Init(uint16_t DeviceAddr, uint16_t OutputDevice,
                       uint8_t Volume, uint32_t AudioFreq) {
   uint32_t counter = 0;
+  (void)AudioFreq;
 
   /* Initialize the Control interface of the Audio Codec */
   AUDIO_IO_Init();
@@ -237,6 +238,8 @@ uint32_t cs43l22_ReadID(uint16_t DeviceAddr) {
  */
 uint32_t cs43l22_Play(uint16_t DeviceAddr, uint16_t* pBuffer, uint16_t Size) {
   uint32_t counter = 0;
+  (void)pBuffer;
+  (void)Size;
 
   if (Is_cs43l22_Stop == 1) {
     /* Enable the digital soft ramp */
@@ -305,6 +308,7 @@ uint32_t cs43l22_Resume(uint16_t DeviceAddr) {
  */
 uint32_t cs43l22_Stop(uint16_t DeviceAddr, uint32_t CodecPdwnMode) {
   uint32_t counter = 0;
+  (void)CodecPdwnMode;
 
   /* Mute the output first */
   counter += cs43l22_SetMute(DeviceAddr, AUDIO_MUTE_ON);
@@ -355,6 +359,8 @@ uint32_t cs43l22_SetVolume(uint16_t DeviceAddr, uint8_t Volume) {
  * @retval 0 if correct communication, else wrong communication
  */
 uint32_t cs43l22_SetFrequency(uint16_t DeviceAddr, uint32_t AudioFreq) {
+  (void)DeviceAddr;
+  (void)AudioFreq;
   return 0;
 }
 
@@ -436,7 +442,10 @@ uint32_t cs43l22_SetOutputMode(uint16_t DeviceAddr, uint8_t Output) {
  * @param DeviceAddr: Device address on communication Bus.
  * @retval 0 if correct communication, else wrong communication
  */
-uint32_t cs43l22_Reset(uint16_t DeviceAddr) { return 0; }
+uint32_t cs43l22_Reset(uint16_t DeviceAddr) {
+  (void)DeviceAddr;
+  return 0;
+}
 
 /**
  * @brief  Writes/Read a single data.
@@ -445,14 +454,16 @@ uint32_t cs43l22_Reset(uint16_t DeviceAddr) { return 0; }
  * @param  Value: Data to be written
  * @retval None
  */
-static uint8_t CODEC_IO_Write(uint8_t Addr, uint8_t Reg, uint8_t Value) {
-  uint32_t result = 0;
+static uint8_t CODEC_IO_Write(uint16_t Addr, uint8_t Reg, uint8_t Value) {
+  uint8_t result;
 
-  AUDIO_IO_Write(Addr, Reg, Value);
+  result = AUDIO_IO_Write(Addr, Reg, Value);
 
 #ifdef VERIFY_WRITTENDATA
   /* Verify that the data has been correctly written */
-  result = (AUDIO_IO_Read(Addr, Reg) == Value) ? 0 : 1;
+  if ((result == 0U) && (AUDIO_IO_Read(Addr, Reg) != Value)) {
+    result = 1U;
+  }
 #endif /* VERIFY_WRITTENDATA */
 
   return result;

@@ -33,6 +33,7 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
+#include "FreeRTOS.h"
 
 /* USER CODE BEGIN INCLUDE */
 
@@ -111,10 +112,10 @@
 /* Memory management macros */
 
 /** Alias for memory allocation. */
-#define USBH_malloc         malloc
+#define USBH_malloc         pvPortMalloc
 
 /** Alias for memory release. */
-#define USBH_free           free
+#define USBH_free           vPortFree
 
 /** Alias for memory set. */
 #define USBH_memset         memset
@@ -191,4 +192,3 @@
 #endif
 
 #endif /* __USBH_CONF__H__ */
-

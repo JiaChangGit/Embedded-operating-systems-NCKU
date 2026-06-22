@@ -24,10 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "AUDIO.h"
-#include "File_Handling.h"
-#include "lcd16x2_i2c.h"
-#include "waveplayer.h"
+#include "app_main.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,14 +53,6 @@ DMA_HandleTypeDef hdma_usart3_rx;
 DMA_HandleTypeDef hdma_usart3_tx;
 
 /* USER CODE BEGIN PV */
-uint8_t receiveData[20];
-
-#define Audio_next 0x00
-#define Audio_previous 0x01
-#define Audio_volumnUp 0x02
-#define Audio_volumnDown 0x03
-#define Audio_pause 0x04
-#define Audio_resume 0x05
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -82,75 +71,6 @@ void MX_USB_HOST_Process(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern ApplicationTypeDef Appli_state;
-extern AUDIO_PLAYBACK_StateTypeDef AudioState;
-
-uint32_t uwVolume_tmp = 0;
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
-  int isValid_ble = 0;
-  if (huart == &huart3) {
-    HAL_UART_Transmit_DMA(huart, receiveData, Size);
-
-    if (receiveData[0] == 0xAA) {
-      if (receiveData[1] == Size) {
-        uint8_t sum = 0;
-        // for (int i = 0; i < Size - 1; ++i) {
-        // sum += receiveData[i];
-        //}
-
-        if (sum == receiveData[Size - 1]) {
-          for (int i = 2; i < Size - 1; ++i) {
-        	  isValid_ble = 1;
-            switch (receiveData[i]) {
-              case Audio_next:  // 0x00
-                AudioState = AUDIO_STATE_NEXT;
-                break;
-              case Audio_previous:  // 0x01
-                AudioState = AUDIO_STATE_PREVIOUS;
-                break;
-              case Audio_volumnUp:  // 0x02
-                AudioState = AUDIO_STATE_VOLUME_UP;
-                break;
-              case Audio_volumnDown:  // 0x03
-                AudioState = AUDIO_STATE_VOLUME_DOWN;
-                break;
-              case Audio_pause:  // 0x04
-                AudioState = AUDIO_STATE_PAUSE;
-                break;
-              case Audio_resume:  // 0x05
-                AudioState = AUDIO_STATE_RESUME;
-                break;
-              default:
-                break;
-            }
-          }
-        }
-      }
-    }
-    HAL_UARTEx_ReceiveToIdle_DMA(huart, receiveData, sizeof(receiveData));
-    __HAL_DMA_DISABLE_IT(&hdma_usart3_rx, DMA_IT_HT);
-  }
-  if (isValid_ble == 0) {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-  } else {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
-  }
-}
-
-int IsFinished = 0;
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  if (GPIO_Pin == GPIO_PIN_0) {
-    switch (AudioState) {
-      case AUDIO_STATE_PLAY:
-        AudioState = AUDIO_STATE_NEXT;
-        break;
-      default:
-        break;
-    }
-  }
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -189,65 +109,16 @@ int main(void) {
   MX_I2C3_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  if (lcd16x2_i2c_init(&hi2c3)) {
-    lcd16x2_i2c_clear();
-    lcd16x2_i2c_printf("START %.2f", 6.20);
-    lcd16x2_i2c_2ndLine();
-    lcd16x2_i2c_printf("NCKU Team-14");
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
-  }
-  HAL_UARTEx_RxEventCallback(&huart3, sizeof(receiveData));
-  uwVolume_tmp = get_uwVolume();
+  app_main_start(&huart3, &hi2c3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
     /* USER CODE END WHILE */
-    MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
-    if (Appli_state == APPLICATION_READY) {
-      Mount_USB();
-      AUDIO_PLAYER_Start(0);
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
-      while (!IsFinished) {
-        AUDIO_PLAYER_Process(TRUE);
-
-        if (AudioState == AUDIO_STATE_STOP) {
-          lcd16x2_i2c_clear();
-          lcd16x2_i2c_printf("END");
-          IsFinished = 1;
-          HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
-          HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
-          HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
-        } else if (AudioState == AUDIO_STATE_VOLUME_UP) {
-          uwVolume_tmp += 10;
-          lcd16x2_i2c_clear();
-          lcd16x2_i2c_printf("VOLUME_UP");
-          lcd16x2_i2c_2ndLine();
-          lcd16x2_i2c_printf("v: %u", uwVolume_tmp);
-          HAL_Delay(200);
-        } else if (AudioState == AUDIO_STATE_VOLUME_DOWN) {
-          uwVolume_tmp -= 10;
-          lcd16x2_i2c_clear();
-          lcd16x2_i2c_printf("VOLUME_DOWN");
-          lcd16x2_i2c_2ndLine();
-          lcd16x2_i2c_printf("v: %u", uwVolume_tmp);
-          HAL_Delay(200);
-        } else if (AudioState == AUDIO_STATE_RESUME) {
-          lcd16x2_i2c_clear();
-          lcd16x2_i2c_printf("RESUME");
-          lcd16x2_i2c_2ndLine();
-          lcd16x2_i2c_printf("v: %u", uwVolume_tmp);
-          HAL_Delay(200);
-        } else if (AudioState == AUDIO_STATE_PAUSE) {
-          lcd16x2_i2c_clear();
-          lcd16x2_i2c_printf("PAUSE");
-          HAL_Delay(200);
-        }
-      }
-    }
+    __WFI();
   }
   /* USER CODE END 3 */
 }
@@ -422,13 +293,13 @@ static void MX_DMA_Init(void) {
 
   /* DMA interrupt init */
   /* DMA1_Stream1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
   /* DMA1_Stream3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
   /* DMA1_Stream5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 6, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
 }
 
@@ -476,7 +347,7 @@ static void MX_GPIO_Init(void) {
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
